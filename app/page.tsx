@@ -18,7 +18,7 @@ export default function Home() {
 
         try {
             const res = await fetch('/api/pastes', {
-                method: 'POST',
+                method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
                 },

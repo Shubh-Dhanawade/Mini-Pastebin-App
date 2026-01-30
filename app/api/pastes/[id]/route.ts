@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPaste } from '@/lib/pastes';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-    const id = params.id;
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
 
     // Deterministic Time logic
     let now = Date.now();

@@ -1,7 +1,7 @@
 import { getPaste } from '@/lib/pastes';
 import { notFound } from 'next/navigation';
 
-export default async function ViewPaste({ params }: { params: { id: string } }) {
+export default async function ViewPaste({ params }: { params: Promise<{ id: string }> }) {
     // Deterministic Time Logic (Read from headers if possible? No, Server Components don't easily access request headers for logic like this without headers() function)
     // But wait, the REQUIREMENT says "Use request header x-test-now-ms ... This applies ONLY to expiry logic"
     // If I use `headers()` from `next/headers`, I can get it.
@@ -17,7 +17,7 @@ export default async function ViewPaste({ params }: { params: { id: string } }) 
     // However, `headers()` is readonly.
 
     const { headers } = await import('next/headers');
-    const headersList = headers();
+    const headersList = await headers();
     const testNow = headersList.get('x-test-now-ms');
 
     let now = Date.now();
@@ -26,7 +26,8 @@ export default async function ViewPaste({ params }: { params: { id: string } }) 
         if (!isNaN(parsed)) now = parsed;
     }
 
-    const paste = await getPaste(params.id, now);
+    const resolvedParams = await params;
+    const paste = await getPaste(resolvedParams.id, now);
 
     if (!paste) {
         notFound();
